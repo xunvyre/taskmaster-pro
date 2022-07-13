@@ -77,7 +77,7 @@ $(".list-group").on("blur", "textarea", function()
 
 //on click, transform span element to a textarea element
 $(".list-group").on("click", "span", function()
-{
+{ 
   //get current text
   var date = $(this).text().trim();
 
@@ -90,7 +90,7 @@ $(".list-group").on("click", "span", function()
   //enable datepicker
   dateInput.datepicker(
     {
-      //minDate: 1,
+      minDate: 1,
       onClose: function()
       {
         //when calendar is closed, force a change event on dateInput
@@ -156,23 +156,25 @@ $(".card .list-group").sortable
   scroll: false,
   tolerance: "pointer",
   helper: "clone",
-  activate: function(event)
+  activate: function(event, ui)
   {
-    console.log("activate", this);
+    $(this).addClass("dropover");
+    $(".bottom-trash").addClass("bottom-trash-drag");
   },
-  deactivate: function(event)
+  deactivate: function(event, ui)
   {
-    console.log("deactivate", this);
+    $(this).removeClass("dropover");
+    $(".bottom-trash").removeClass("bottom-trash-drag");
   },
   over: function(event)
   {
-    console.log("out", event.target);
+    $(event.target).addClass("dropover-active");
   },
   out: function(event)
   {
-    console.log("out", event.target);
+    $(event.target).removeClass("dropover-active");
   },
-  update: function(event)
+  update: function()
   {
     //declare array to store data in
     var tempArr = [];
@@ -217,7 +219,7 @@ $("#task-form-modal").on("shown.bs.modal", function()
 $("#modalDueDate").datepicker(
 {
   //don't allow dates that have already passed
-  //minDate: 1,
+  minDate: 1,
   onClose: function()
   {
     //when calendar is closed, force a change event on dateInput
@@ -269,19 +271,25 @@ $("#trash").droppable(
   drop: function(event, ui)
   {
     ui.draggable.remove();
-    console.log("drop");
+    $(".bottom-trash").removeClass("bottom-trash-active");
   },
   over: function(event, ui)
   {
-    console.log("out");
+    $(".bottom-trash").addClass("bottom-trash-active");
   },
   out: function(event, ui)
   {
-    console.log("out");
+    $(".bottom-trash").removeClass("bottom-trash-active");
   }
 });
 
 // load tasks for the first time
 loadTasks();
 
-
+setInterval(function()
+{
+  $(".card .list-group-item").each(function(index, el)
+  {
+    auditTask(el);
+  });
+}, 1800000);
